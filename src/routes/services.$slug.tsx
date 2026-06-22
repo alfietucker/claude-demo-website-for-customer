@@ -1,4 +1,5 @@
 import { createFileRoute, notFound, Link } from "@tanstack/react-router";
+import { useEffect } from "react";
 import { CheckCircle2, ArrowRight, Phone } from "lucide-react";
 import { SERVICES, SITE, SUBURBS, type Service } from "@/lib/site";
 import { QuoteForm } from "@/components/QuoteForm";
@@ -11,35 +12,6 @@ export const Route = createFileRoute("/services/$slug")({
     if (!service) throw notFound();
     return { service };
   },
-  head: ({ loaderData }) => {
-    const s = loaderData?.service;
-    if (!s) return { meta: [{ title: "Service not found" }] };
-    return {
-      meta: [
-        { title: `${s.title} | Apex Roofing Perth` },
-        { name: "description", content: s.short },
-        { property: "og:title", content: `${s.title} | Apex Roofing Perth` },
-        { property: "og:description", content: s.short },
-        { property: "og:url", content: `/services/${s.slug}` },
-        { property: "og:type", content: "article" },
-      ],
-      links: [{ rel: "canonical", href: `/services/${s.slug}` }],
-      scripts: [
-        {
-          type: "application/ld+json",
-          children: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "FAQPage",
-            mainEntity: s.faqs.map((f) => ({
-              "@type": "Question",
-              name: f.q,
-              acceptedAnswer: { "@type": "Answer", text: f.a },
-            })),
-          }),
-        },
-      ],
-    };
-  },
   component: ServicePage,
   notFoundComponent: () => (
     <div className="py-32 text-center">
@@ -51,6 +23,9 @@ export const Route = createFileRoute("/services/$slug")({
 
 function ServicePage() {
   const { service } = Route.useLoaderData() as { service: Service };
+  useEffect(() => {
+    document.title = `${service.title} | Apex Roofing Perth`;
+  }, [service.title]);
   return (
     <>
       <section className="relative">

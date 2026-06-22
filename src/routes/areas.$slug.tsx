@@ -1,4 +1,5 @@
 import { createFileRoute, notFound, Link } from "@tanstack/react-router";
+import { useEffect } from "react";
 import { CheckCircle2, Phone, Star } from "lucide-react";
 import { SUBURBS, SERVICES, REVIEWS, SITE, type Suburb } from "@/lib/site";
 import { QuoteForm } from "@/components/QuoteForm";
@@ -11,20 +12,6 @@ export const Route = createFileRoute("/areas/$slug")({
     if (!suburb) throw notFound();
     return { suburb };
   },
-  head: ({ loaderData }) => {
-    const s = loaderData?.suburb;
-    if (!s) return { meta: [{ title: "Suburb not found" }] };
-    return {
-      meta: [
-        { title: `Roofing ${s.name} | Apex Roofing Perth` },
-        { name: "description", content: `Trusted roofing contractors in ${s.name}. Roof repairs, restoration, re-roofing & emergency leak repairs. Licensed, insured & locally owned.` },
-        { property: "og:title", content: `Roofing ${s.name} | Apex Roofing Perth` },
-        { property: "og:description", content: `Local roofing specialists serving ${s.name}.` },
-        { property: "og:url", content: `/areas/${s.slug}` },
-      ],
-      links: [{ rel: "canonical", href: `/areas/${s.slug}` }],
-    };
-  },
   component: SuburbPage,
   notFoundComponent: () => (
     <div className="py-32 text-center">
@@ -36,6 +23,9 @@ export const Route = createFileRoute("/areas/$slug")({
 
 function SuburbPage() {
   const { suburb } = Route.useLoaderData() as { suburb: Suburb };
+  useEffect(() => {
+    document.title = `Roofing ${suburb.name} | Apex Roofing Perth`;
+  }, [suburb.name]);
   const localReviews = REVIEWS.filter((r) => r.suburb === suburb.name);
   return (
     <>

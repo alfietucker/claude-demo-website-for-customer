@@ -18,16 +18,13 @@ const ADMIN_PASSWORD = "apex2024";
 const AUTH_KEY = "apex_crm_auth";
 
 export const Route = createFileRoute("/admin/")({
-  head: () => ({
-    meta: [
-      { title: "CRM Admin — Apex Roofing Perth" },
-      { name: "robots", content: "noindex, nofollow" },
-    ],
-  }),
   component: AdminPage,
 });
 
 function AdminPage() {
+  useEffect(() => {
+    document.title = "CRM Admin — Apex Roofing Perth";
+  }, []);
   const [authed, setAuthed] = useState(false);
   const [checking, setChecking] = useState(true);
 
